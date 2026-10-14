@@ -1,9 +1,21 @@
 
-FROM ghcr.io/anomalyco/opencode:latest
+FROM ubuntu:24.04
 
-ENV HOME=/root
-WORKDIR /app
+ENV DEBIAN_FRONTEND=noninteractive
 
-EXPOSE 4096
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    curl \
+    git \
+    systemd \
+    dbus \
+    && rm -rf /var/lib/apt/lists/*
 
-CMD ["sh", "-c", "opencode web --hostname 0.0.0.0 --port ${PORT:-4096}"]
+WORKDIR /opt/laranode
+
+RUN git clone --depth 1 \
+    https://github.com/crivion/laranode.git .
+
+EXPOSE 80
+
+CMD ["/sbin/init"]
